@@ -1,10 +1,7 @@
 package com.example.ideanotemain
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -20,6 +17,7 @@ class PaintView : View {
         var pathList = ArrayList<Path>()
         var colorList = ArrayList<Int>()
         var currentBrush = Color.BLACK
+        lateinit var bmp : Bitmap
     }
 
     constructor(context: Context) : this(context, null){
@@ -63,9 +61,14 @@ class PaintView : View {
     }
 
     override fun onDraw(canvas: Canvas) {
+        var w = canvas.width
+        var h = canvas.height
+        bmp = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565)
+        val can: Canvas = Canvas(bmp)
         for(i in pathList.indices){
             paintBrush.setColor(colorList[i])
             canvas.drawPath(pathList[i], paintBrush)
+            can.drawPath(pathList[i], paintBrush)
             invalidate()
         }
     }
