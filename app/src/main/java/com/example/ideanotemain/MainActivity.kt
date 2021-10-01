@@ -12,6 +12,7 @@ class MainActivity : AppCompatActivity() {
 
         val bSketch = findViewById<Button>(R.id.button_sketch)
         val bCam = findViewById<Button>(R.id.button_camera)
+        val bNote = findViewById<Button>(R.id.button_note)
 
         bSketch.setOnClickListener{
             val intent = Intent(this, PaintActivity::class.java)
@@ -20,6 +21,11 @@ class MainActivity : AppCompatActivity() {
 
         bCam.setOnClickListener{
             val intent = Intent(this, CameraActivity::class.java)
+            startActivity(intent)
+        }
+
+        bNote.setOnClickListener{
+            val intent = Intent(this, NoteActivity::class.java)
             startActivity(intent)
         }
     }
