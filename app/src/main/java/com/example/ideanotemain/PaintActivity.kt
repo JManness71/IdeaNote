@@ -9,9 +9,8 @@ import android.graphics.Path
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import com.example.ideanotemain.PaintView.Companion.bmp
 import com.example.ideanotemain.PaintView.Companion.colorList
 import com.example.ideanotemain.PaintView.Companion.currentBrush
@@ -22,11 +21,13 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.*
 
-class PaintActivity : AppCompatActivity() {
+class PaintActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     companion object {
         var path = Path()
         var paintBrush = Paint()
     }
+
+    var brushSizes = arrayOf(6, 8, 10, 12, 14)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,17 +39,23 @@ class PaintActivity : AppCompatActivity() {
         val blackBtn = findViewById<ImageButton>(R.id.blackColor)
         val eraser = findViewById<ImageButton>(R.id.whiteColor)
         val save = findViewById<Button>(R.id.save_button)
+        val spinner = findViewById<Spinner>(R.id.brush_spinner)
+
+        spinner.onItemSelectedListener = this
+        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, brushSizes)
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = arrayAdapter
 
         redBtn.setOnClickListener{
-            paintBrush.setColor(Color.RED)
+            paintBrush.color = Color.RED
             currentColor(paintBrush.color)
         }
         blueBtn.setOnClickListener{
-            paintBrush.setColor(Color.BLUE)
+            paintBrush.color = Color.BLUE
             currentColor(paintBrush.color)
         }
         blackBtn.setOnClickListener{
-            paintBrush.setColor(Color.BLACK)
+            paintBrush.color = Color.BLACK
             currentColor(paintBrush.color)
         }
         eraser.setOnClickListener{
@@ -60,6 +67,14 @@ class PaintActivity : AppCompatActivity() {
             val uri = bitmapToFile(bmp)
             Toast.makeText(this, "Saved to " + uri, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onItemSelected(arg0: AdapterView<*>?, arg1: View?, position: Int, id: Long) {
+        paintBrush.strokeWidth = brushSizes[position].toFloat()
+    }
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {
+        // Do Nothing
     }
 
     private fun currentColor(color: Int){
