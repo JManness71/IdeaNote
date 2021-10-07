@@ -9,8 +9,10 @@ import android.graphics.Path
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
 import android.widget.*
+import androidx.core.content.FileProvider
 import com.example.ideanotemain.PaintView.Companion.bmp
 import com.example.ideanotemain.PaintView.Companion.colorList
 import com.example.ideanotemain.PaintView.Companion.currentBrush
@@ -20,6 +22,10 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.util.*
+
+private const val FILE_NAME = "drawing.jpg"
+private const val REQUEST_CODE = 1
+private lateinit var drawFile: File
 
 class PaintActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     companion object {
@@ -36,6 +42,7 @@ class PaintActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         val redBtn = findViewById<ImageButton>(R.id.redColor)
         val blueBtn = findViewById<ImageButton>(R.id.blueColor)
+        val greenBtn = findViewById<ImageButton>(R.id.greenColor)
         val blackBtn = findViewById<ImageButton>(R.id.blackColor)
         val eraser = findViewById<ImageButton>(R.id.whiteColor)
         val save = findViewById<Button>(R.id.save_button)
@@ -54,6 +61,10 @@ class PaintActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             paintBrush.color = Color.BLUE
             currentColor(paintBrush.color)
         }
+        greenBtn.setOnClickListener{
+            paintBrush.color = Color.GREEN
+            currentColor(paintBrush.color)
+        }
         blackBtn.setOnClickListener{
             paintBrush.color = Color.BLACK
             currentColor(paintBrush.color)
@@ -64,8 +75,16 @@ class PaintActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             path.reset()
         }
         save.setOnClickListener{
-            val uri = bitmapToFile(bmp)
-            Toast.makeText(this, "Saved to " + uri, Toast.LENGTH_SHORT).show()
+            drawFile = getPhotoFile(FILE_NAME)
+            val out = FileOutputStream(drawFile)
+            try{
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, out)
+            }
+            catch (e: IOException) {
+                Toast.makeText(this, "Saving Failed", Toast.LENGTH_SHORT).show()
+            }
+//            val uri = bitmapToFile(bmp)
+//            Toast.makeText(this, "Saved to " + uri, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -99,5 +118,10 @@ class PaintActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
 
         return Uri.parse(file.absolutePath)
+    }
+
+    private fun getPhotoFile(fileName: String): File {
+        val storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(fileName, ".jpg", storageDirectory)
     }
 }
