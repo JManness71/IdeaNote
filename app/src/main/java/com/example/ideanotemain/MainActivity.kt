@@ -30,6 +30,11 @@ class MainActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         }
 
+        listview.setOnItemClickListener { parent, view, position, id ->
+            val intent = Intent(this, NoteActivity::class.java)
+            this.startActivity(intent)
+        }
+
 //        val bSketch = findViewById<Button>(R.id.button_sketch)
 //        val bCam = findViewById<Button>(R.id.button_camera)
 //        val bNote = findViewById<Button>(R.id.button_note)
