@@ -1,25 +1,20 @@
 package com.example.ideanotemain
 
+import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ListView
+import android.widget.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.lang.reflect.Type
-import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.reflect.KType
-import kotlin.reflect.typeOf
 
 class MainActivity : AppCompatActivity() {
     lateinit var listPrefs: SharedPreferences
-    lateinit var listElements: ArrayList<String>
+    lateinit var listElements: ArrayList<ListItem>
+    val listTitles = arrayListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,39 +24,26 @@ class MainActivity : AppCompatActivity() {
         val addButton = findViewById<Button>(R.id.button1)
         val value = findViewById<EditText>(R.id.editText1)
         loadData()
-        val adapter: ArrayAdapter<String> = ArrayAdapter(this, android.R.layout.simple_list_item_1, listElements)
+        val adapter: ArrayAdapter<String> = ArrayAdapter(this, android.R.layout.simple_list_item_1, listTitles)
 
         listview.adapter = adapter
 
         addButton.setOnClickListener{
-            listElements.add(value.text.toString())
+            val l = ListItem()
+            l.title = value.text.toString()
+            listElements.add(l)
+            listTitles.add(value.text.toString())
             saveData()
             adapter.notifyDataSetChanged()
         }
 
         listview.setOnItemClickListener { parent, view, position, id ->
             val intent = Intent(this, NoteActivity::class.java)
-            this.startActivity(intent)
+            intent.putExtra("item", listElements[position])
+            intent.putExtra("position", position)
+            //this.startActivity(intent)
+            this.startActivityForResult(intent, 1)
         }
-
-//        val bSketch = findViewById<Button>(R.id.button_sketch)
-//        val bCam = findViewById<Button>(R.id.button_camera)
-//        val bNote = findViewById<Button>(R.id.button_note)
-//
-//        bSketch.setOnClickListener{
-//            val intent = Intent(this, PaintActivity::class.java)
-//            startActivity(intent)
-//        }
-//
-//        bCam.setOnClickListener{
-//            val intent = Intent(this, CameraActivity::class.java)
-//            startActivity(intent)
-//        }
-//
-//        bNote.setOnClickListener{
-//            val intent = Intent(this, NoteActivity::class.java)
-//            startActivity(intent)
-//        }
     }
 
     private fun loadData(){
@@ -71,12 +53,16 @@ class MainActivity : AppCompatActivity() {
 
         val json: String? = listPrefs.getString("notes", emptyList<String>().toString())
 
-        val type = object: TypeToken<ArrayList<String>>() {}.type
+        val type = object: TypeToken<ArrayList<ListItem>>() {}.type
 
-        listElements = gson.fromJson<ArrayList<String>>(json, type)
+        listElements = gson.fromJson<ArrayList<ListItem>>(json, type)
 
         if(listElements == null){
-            listElements = ArrayList<String>()
+            listElements = ArrayList<ListItem>()
+        }
+
+        for(t in listElements){
+            listTitles.add(t.title)
         }
     }
 
@@ -91,5 +77,16 @@ class MainActivity : AppCompatActivity() {
 
         editor.putString("notes", json)
         editor.apply()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == 1){
+            val pos = data?.extras?.getInt("returned_position", 0)
+            listElements[pos!!] = data.extras!!.getSerializable("returned_item") as ListItem
+            saveData()
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
     }
 }
