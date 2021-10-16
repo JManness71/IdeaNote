@@ -2,6 +2,7 @@ package com.example.ideanotemain
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Paint
@@ -34,6 +35,7 @@ class PaintActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     var brushSizes = arrayOf(6, 8, 10, 12, 14)
+    var location = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +78,7 @@ class PaintActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
         save.setOnClickListener{
             drawFile = getPhotoFile(FILE_NAME)
+            location = drawFile.absolutePath
             val out = FileOutputStream(drawFile)
             try{
                 bmp.compress(Bitmap.CompressFormat.JPEG, 100, out)
@@ -83,8 +86,10 @@ class PaintActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             catch (e: IOException) {
                 Toast.makeText(this, "Saving Failed", Toast.LENGTH_SHORT).show()
             }
-//            val uri = bitmapToFile(bmp)
-//            Toast.makeText(this, "Saved to " + uri, Toast.LENGTH_SHORT).show()
+            val intent = Intent()
+            intent.putExtra("returned_drawing", location)
+            setResult(RESULT_OK, intent)
+            finish()
         }
     }
 
@@ -99,25 +104,6 @@ class PaintActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private fun currentColor(color: Int){
         currentBrush = color
         path = Path()
-    }
-
-    private fun bitmapToFile(bitmap: Bitmap) : Uri {
-        val wrapper = ContextWrapper(applicationContext)
-
-        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
-        file = File(file, "${UUID.randomUUID()}.jpg")
-
-        try{
-            val stream:OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            stream.flush()
-            stream.close()
-        }
-        catch (e: IOException){
-            e.printStackTrace()
-        }
-
-        return Uri.parse(file.absolutePath)
     }
 
     private fun getPhotoFile(fileName: String): File {

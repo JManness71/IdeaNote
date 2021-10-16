@@ -5,15 +5,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 
 class NoteActivity : AppCompatActivity() {
-    var position: Int = 0
+    var thisItem = ListItem()
+    var position = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
 
-        val thisItem: ListItem = intent.getSerializableExtra("item") as ListItem
-        val position = intent.getIntExtra("position", 0)
+        thisItem = intent.getSerializableExtra("item") as ListItem
+        position = intent.getIntExtra("position", 0)
 
         val titleText = findViewById<EditText>(R.id.title_text)
         val bodyText = findViewById<EditText>(R.id.body_text)
@@ -26,12 +28,13 @@ class NoteActivity : AppCompatActivity() {
 
         sketchBtn.setOnClickListener{
             val sketchIntent = Intent(this, PaintActivity::class.java)
-            this.startActivity(sketchIntent)
+            sketchIntent.putExtra("sketchItem", thisItem)
+            this.startActivityForResult(sketchIntent, 2)
         }
 
         photoBtn.setOnClickListener{
             val photoIntent = Intent(this, CameraActivity::class.java)
-            this.startActivity(photoIntent)
+            this.startActivityForResult(photoIntent, 1)
         }
 
         saveBtn.setOnClickListener{
@@ -42,6 +45,19 @@ class NoteActivity : AppCompatActivity() {
             intent.putExtra("returned_position", position)
             setResult(RESULT_OK, intent)
             finish()
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == 1){
+            thisItem.addPicture(data?.extras?.getString("returned_picture")!!)
+        }
+        else if(requestCode == 2){
+            thisItem.addDrawing(data?.extras?.getString("returned_drawing")!!)
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 }

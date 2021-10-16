@@ -19,6 +19,7 @@ private const val FILE_NAME = "photo.jpg"
 private const val REQUEST_CODE = 1
 private lateinit var photoFile: File
 class CameraActivity : AppCompatActivity() {
+    var location = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
@@ -46,6 +47,7 @@ class CameraActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            location = photoFile.absolutePath
             val takenImage = BitmapFactory.decodeFile(photoFile.absolutePath)
             val camImageView = findViewById<ImageView>(R.id.imageView)
             camImageView.setImageBitmap(takenImage)
@@ -53,5 +55,13 @@ class CameraActivity : AppCompatActivity() {
         else{
             super.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent()
+        intent.putExtra("returned_picture", location)
+        setResult(RESULT_OK, intent)
+        finish()
+        super.onBackPressed()
     }
 }
