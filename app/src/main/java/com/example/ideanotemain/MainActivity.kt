@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -14,7 +15,7 @@ import kotlin.collections.ArrayList
 class MainActivity : AppCompatActivity() {
     lateinit var listPrefs: SharedPreferences
     lateinit var listElements: ArrayList<ListItem>
-    val listTitles = arrayListOf<String>()
+    var listTitles = arrayListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +44,15 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("position", position)
             //this.startActivity(intent)
             this.startActivityForResult(intent, 1)
+        }
+
+        listview.setOnItemLongClickListener {_, _, index, _ ->
+            listElements.removeAt(index)
+            saveData()
+            refreshTitles()
+            saveData()
+            adapter.notifyDataSetChanged()
+            true
         }
     }
 
@@ -87,6 +97,13 @@ class MainActivity : AppCompatActivity() {
         }
         else {
             super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
+    fun refreshTitles(){
+        listTitles = arrayListOf<String>()
+        for( element in listElements){
+            listTitles.add(element.title)
         }
     }
 }

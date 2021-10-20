@@ -15,12 +15,4 @@ public class ListItem: Serializable  {
     fun addDrawing(location: String){
         drawings.add(location)
     }
-
-    fun sTitle(s: String){
-        title = s
-    }
-
-    fun sBody(s: String){
-        body = s
-    }
 }

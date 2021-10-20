@@ -1,11 +1,10 @@
 package com.example.ideanotemain
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 
 class NoteActivity : AppCompatActivity() {
     var thisItem = ListItem()
@@ -25,6 +24,22 @@ class NoteActivity : AppCompatActivity() {
 
         titleText.setText(thisItem.title)
         bodyText.setText(thisItem.body)
+
+        val linear = findViewById<LinearLayout>(R.id.linear)
+
+        for(element in thisItem.pictures){
+            val img = ImageView(this)
+            val bmp = BitmapFactory.decodeFile(element)
+            img.setImageBitmap(bmp)
+            linear.addView(img)
+        }
+
+        for(element in thisItem.drawings){
+            val img = ImageView(this)
+            val bmp = BitmapFactory.decodeFile(element)
+            img.setImageBitmap(bmp)
+            linear.addView(img)
+        }
 
         sketchBtn.setOnClickListener{
             val sketchIntent = Intent(this, PaintActivity::class.java)
@@ -50,11 +65,21 @@ class NoteActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val linear = findViewById<LinearLayout>(R.id.linear)
         if(requestCode == 1){
             thisItem.addPicture(data?.extras?.getString("returned_picture")!!)
+            val img = ImageView(this)
+            val bmp = BitmapFactory.decodeFile(data?.extras?.getString("returned_picture")!!)
+            img.setImageBitmap(bmp)
+            linear.addView(img)
+
         }
         else if(requestCode == 2){
             thisItem.addDrawing(data?.extras?.getString("returned_drawing")!!)
+            val img = ImageView(this)
+            val bmp = BitmapFactory.decodeFile(data?.extras?.getString("returned_drawing")!!)
+            img.setImageBitmap(bmp)
+            linear.addView(img)
         }
         else {
             super.onActivityResult(requestCode, resultCode, data)
