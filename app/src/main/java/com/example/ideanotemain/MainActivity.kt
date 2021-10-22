@@ -48,8 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         listview.setOnItemLongClickListener {_, _, index, _ ->
             listElements.removeAt(index)
-            saveData()
-            refreshTitles()
+            listTitles.removeAt(index)
             saveData()
             adapter.notifyDataSetChanged()
             true
