@@ -6,8 +6,12 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.NotificationCompat.getColor
+import androidx.core.content.ContextCompat.getColor
+import androidx.core.content.res.ResourcesCompat.getColor
 import com.example.ideanotemain.PaintActivity.Companion.paintBrush
 import com.example.ideanotemain.PaintActivity.Companion.path
+import com.google.android.material.color.MaterialColors.getColor
 
 class PaintView : View {
 
@@ -65,6 +69,10 @@ class PaintView : View {
         var h = canvas.height
         bmp = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565)
         val can: Canvas = Canvas(bmp)
+        var fill = Paint()
+        fill.style = Paint.Style.FILL
+        fill.setColor(Color.WHITE)
+        can.drawRect(0F, 0F, width.toFloat(), height.toFloat(), fill)
         for(i in pathList.indices){
             paintBrush.setColor(colorList[i])
             canvas.drawPath(pathList[i], paintBrush)

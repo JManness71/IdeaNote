@@ -23,11 +23,18 @@
         android:ems="10"
         android:hint="Note Title" />
 
+    <TextView
+        android:id="@+id/delete_help"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button1"
+        android:layout_centerHorizontal="true"
+        android:text="Press and Hold to Delete"/>
+
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button1"
-        android:layout_centerHorizontal="true" >
-    </ListView>
+        android:layout_below="@id/delete_help"
+        android:layout_centerHorizontal="true"></ListView>
 </RelativeLayout>

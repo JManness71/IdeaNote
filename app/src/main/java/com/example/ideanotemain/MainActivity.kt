@@ -6,6 +6,8 @@ import android.content.SharedPreferences
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.ContextMenu
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import com.google.gson.Gson
@@ -96,13 +98,6 @@ class MainActivity : AppCompatActivity() {
         }
         else {
             super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-
-    fun refreshTitles(){
-        listTitles = arrayListOf<String>()
-        for( element in listElements){
-            listTitles.add(element.title)
         }
     }
 }
